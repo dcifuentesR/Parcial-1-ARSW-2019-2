@@ -5,15 +5,20 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PrimeFinder{
+public class PrimeFinder extends Thread{
         
 	
-	
+	private BigInteger a;
+	private BigInteger b;
+	private PrimesResultSet prs;
         
-	public static void findPrimes(BigInteger _a, BigInteger _b, PrimesResultSet prs){
-            
-                BigInteger a=_a;
-                BigInteger b=_b;
+	public PrimeFinder(BigInteger a, BigInteger b,PrimesResultSet prs) {
+		this.a = a;
+		this.b = b;
+		this.prs = prs;
+	}
+
+	public void findPrimes(){
 
                 MathUtilities mt=new MathUtilities();
                 
@@ -24,11 +29,18 @@ public class PrimeFinder{
                     itCount++;
                     if (mt.isPrime(i)){
                         prs.addPrime(i);
-                    }
+                        System.out.println("found prime "+i +"|");
+                    } 
 
                     i=i.add(BigInteger.ONE);
                 }
                 
+	}
+
+	@Override
+	public void run() {
+		findPrimes();
+		
 	}
 	
 	
