@@ -1,6 +1,8 @@
 package edu.eci.arsw.primefinder;
 
 import edu.eci.arsw.math.MathUtilities;
+import edu.eci.arsw.mouseutils.MouseMovementMonitor;
+
 import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +20,7 @@ public class PrimeFinder extends Thread{
 		this.prs = prs;
 	}
 
-	public void findPrimes(){
+	public void findPrimes() throws InterruptedException{
 
                 MathUtilities mt=new MathUtilities();
                 
@@ -30,7 +32,15 @@ public class PrimeFinder extends Thread{
                     if (mt.isPrime(i)){
                         prs.addPrime(i);
                         System.out.println("found prime "+i +"|");
+                        
                     } 
+                    synchronized (prs) {
+                    	
+    					while(MouseMovementMonitor.getInstance().getTimeSinceLastMouseMovement() > 1000) {
+    						System.out.println("pausado thread");prs.wait();}
+    					prs.notifyAll();
+    					
+    				}
 
                     i=i.add(BigInteger.ONE);
                 }
@@ -39,7 +49,12 @@ public class PrimeFinder extends Thread{
 
 	@Override
 	public void run() {
-		findPrimes();
+		try {
+			findPrimes();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
